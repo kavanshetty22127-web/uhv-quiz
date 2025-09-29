@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UHV quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.12);
+      width: 92%;
+      max-width: 420px;
+    }
+    textarea, input, select, button {
+      display: block;
+      margin: 18px 0;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 1em;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button:hover { background: #0056b3; }
+    .hidden { display: none; }
+    .question-block { margin: 26px 0; }
+    .result { color: #3aa655; font-size: 1.4em; margin: 18px 0; }
+    .admin-message { color: #007bff; margin: 8px 0;}
+    .app-title { margin-bottom: 18px; font-size: 1.1em; font-weight: bold; text-align: center;}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="app-title">UHV quiz</div>
+
+  <!-- Admin Panel -->
+  <div id="admin-section" class="hidden">
+    <b>Admin: Enter questions here (save before user quiz!)</b>
+    <textarea id="questions-input" rows="6" placeholder='Example format:
+What is 2+2?|2|4|6|8|1
+Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
+...'></textarea>
+    <button id="save-questions-btn">Save Questions</button>
+    <div class="admin-message" id="admin-message"></div>
+    <button onclick="location.reload()">Logout</button>
+  </div>
+
+  <!-- User Login -->
+  <div id="user-login-section">
+    <b>Enter your name to login</b>
+    <input type="text" id="user-name" placeholder="Your Name">
+    <button id="login-btn">Login</button>
+  </div>
+
+  <!-- Quiz Section -->
+  <div id="quiz-section" class="hidden">
+    <div id="quiz-welcome"></div>
+    <form id="quiz-form"></form>
+    <button id="submit-quiz-btn">Submit Quiz</button>
+  </div>
+
+  <!-- Result Section -->
+  <div id="result-section" class="hidden">
+    <div class="result" id="result-message"></div>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+</div>
+
+<script>
+  const questionsInput = document.getElementById('questions-input');
+  const saveQuestionsBtn = document.getElementById('save-questions-btn');
+  const adminMessage = document.getElementById('admin-message');
+  const adminSection = document.getElementById('admin-section');
+  const userLoginSection = document.getElementById('user-login-section');
+  const userNameInput = document.getElementById('user-name');
+  const loginBtn = document.getElementById('login-btn');
+  const quizSection = document.getElementById('quiz-section');
+  const quizWelcome = document.getElementById('quiz-welcome');
+  const quizForm = document.getElementById('quiz-form');
+  const submitQuizBtn = document.getElementById('submit-quiz-btn');
+  const resultSection = document.getElementById('result-section');
+  const resultMessage = document.getElementById('result-message');
+  let questionPool = [];
+
+  // Save Questions (Admin)
+  saveQuestionsBtn.onclick = function() {
+    const lines = questionsInput.value.trim().split('\n').filter(l=>l.length>0);
+    let newPool = [];
+    for (const line of lines) {
+      const parts = line.split('|');
+      if (parts.length !== 6) { continue; }
+      const [q, o1, o2, o3, o4, answerIdx] = parts;
+      newPool.push({
+        question: q,
+        options: [o1, o2, o3, o4],
+        answer: parseInt(answerIdx)
+      });
+    }
+    if (newPool.length >= 10) {
+      questionPool = newPool;
+      adminMessage.textContent = 'Questions saved! Users may begin the quiz.';
+      saveQuestionsBtn.style.background = "#3aa655";
+      setTimeout(()=>{adminMessage.textContent='';}, 3500);
+    } else {
+      adminMessage.textContent = 'Please enter at least 10 questions in the specified format.';
+    }
+  }
+
+  // Login Logic (Admin/User)
+  loginBtn.onclick = function() {
+    const name = userNameInput.value.trim();
+    if (!name) { userNameInput.style.borderColor='red'; return; }
+    if (name === "ADMIN2007") {
+      userLoginSection.classList.add('hidden');
+      adminSection.classList.remove('hidden');
+    } else {
+      if (questionPool.length < 10) {
+        adminMessage.textContent = 'Admin must save at least 10 questions before starting!';
+        return;
+      }
+      userLoginSection.classList.add('hidden');
+      adminSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      quizWelcome.textContent = 'Welcome, ' + name + '! Answer the following 10 random questions:';
+      startQuiz(name);
+    }
+  };
+
+  function startQuiz(name) {
+    const shuffled = questionPool.slice().sort(()=>Math.random()-0.5);
+    const quizQuestions = shuffled.slice(0, 10);
+    quizForm.innerHTML = '';
+    quizQuestions.forEach((q, idx)=>{
+      quizForm.innerHTML += `
+      <div class="question-block">
+        <b>Q${idx+1}: ${q.question}</b><br>
+        ${q.options.map((opt,i) => ` 
+          <label>
+            <input type="radio" name="q${idx}" value="${i}" required>
+            ${opt}
+          </label><br>
+        `).join('')}
+      </div>
+      `;
+    });
+    window.quizQuestions = quizQuestions; // store for scoring
+  }
+
+  // Submit Quiz
+  submitQuizBtn.onclick = function(e) {
+    e.preventDefault();
+    const answers = [];
+    for (let i=0; i<10; i++) {
+      const sel = quizForm.querySelector('input[name="q'+i+'"]:checked');
+      answers.push(sel ? parseInt(sel.value) : null);
+    }
+    let score = 0;
+    window.quizQuestions.forEach((q, idx)=>{
+      if (answers[idx] === q.answer) score++;
+    });
+    quizSection.classList.add('hidden');
+    resultSection.classList.remove('hidden');
+    resultMessage.textContent = `Quiz complete! You scored ${score} out of 10.`;
+  };
+</script>
+</body>
+</html>
