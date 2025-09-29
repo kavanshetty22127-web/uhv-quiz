@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>UHV quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Fonts: Orbitron & VT323 for gaming style -->
+  <!-- Gaming-style fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=VT323&display=swap" rel="stylesheet">
   <style>
     body {
@@ -39,6 +39,16 @@
       color: #2efad3;
       text-shadow: 0px 0px 8px #9a4aff;
       letter-spacing: 2px;
+      background: linear-gradient(90deg, #2efad3 5%, #5928d3 95%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      border-bottom: 1.5px solid #2efad3;
+      margin-bottom: 2em;
+      margin-top: -0.7em;
+      padding-bottom: 0.4em;
+      box-shadow: 0 1px 8px #2efad366;
     }
     textarea, input, select, button {
       display: block;
@@ -151,7 +161,6 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    /* Custom radio styling */
     input[type="radio"] {
       accent-color: #2efad3;
       width: 1em;
@@ -159,23 +168,6 @@
       margin-right: 8px;
       background: #27194a !important;
       box-shadow: 0 0 2px #2efad3bb;
-    }
-    .container, #admin-section, #quiz-section, #user-login-section {
-      box-shadow: 0 0 40px #5928d3, 0 0 12px #2efad3;
-      border-radius: 20px;
-      border: 2px solid #2efad3;
-    }
-    .app-title {
-      border-bottom: 1.5px solid #2efad3;
-      margin-bottom: 2em;
-      margin-top: -0.7em;
-      padding-bottom: 0.4em;
-      box-shadow: 0 1px 8px #2efad366;
-      background: linear-gradient(90deg, #2efad3 5%, #5928d3 95%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
     }
   </style>
 </head>
@@ -207,7 +199,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     <button onclick="location.reload()">Logout</button>
   </div>
   <!-- User Login -->
-  <div id="user-login-section">
+  <div id="user-login-section" class="">
     <b>Enter your name to login</b>
     <input type="text" id="user-name" placeholder="Your Name">
     <button id="login-btn">Login</button>
@@ -304,8 +296,8 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
       userNameInput.style.borderColor='red';
       return;
     }
+    hideAllPanels();
     if (name === "ADMIN2007") {
-      userLoginSection.classList.add('hidden');
       adminSection.classList.remove('hidden');
       renderUserList();
     } else {
@@ -313,24 +305,32 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
       currUser = name;
       if (questionPool.length < 10) {
         adminMessage.textContent = 'Admin must save at least 10 questions before starting!';
+        userLoginSection.classList.remove('hidden');
         return;
       }
-      userLoginSection.classList.add('hidden');
-      adminSection.classList.add('hidden');
       showLaunch();
     }
   };
 
+  function hideAllPanels(){
+    userLoginSection.classList.add('hidden');
+    adminSection.classList.add('hidden');
+    launchSection.classList.add('hidden');
+    quizSection.classList.add('hidden');
+    resultSection.classList.add('hidden');
+  }
+
   // Launch page logic
   function showLaunch() {
+    hideAllPanels();
     launchSection.classList.remove('hidden');
     document.getElementById('quiz-time-title').style.opacity = "0";
     startQuizBtn.style.opacity = "0"; startQuizBtn.style.pointerEvents = "none";
     // Restart title animation
     document.getElementById('quiz-time-title').style.animation = "none";
-    void document.getElementById('quiz-time-title').offsetWidth; // reflow
+    void document.getElementById('quiz-time-title').offsetWidth;
     document.getElementById('quiz-time-title').style.animation = "";
-    setTimeout(function() { 
+    setTimeout(function() {
       document.getElementById('quiz-time-title').style.opacity = "1";
     },100);
     setTimeout(function() {
@@ -339,7 +339,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     }, 1300);
   }
   startQuizBtn.onclick = function() {
-    launchSection.classList.add('hidden');
+    hideAllPanels();
     quizSection.classList.remove('hidden');
     quizWelcome.textContent = 'Welcome, ' + currUser + '! Answer the following 10 random questions:';
     startQuiz(currUser);
@@ -377,7 +377,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     window.quizQuestions.forEach((q, idx)=>{
       if (answers[idx] === q.answer) score++;
     });
-    quizSection.classList.add('hidden');
+    hideAllPanels();
     resultSection.classList.remove('hidden');
     resultMessage.textContent = `Quiz complete! You scored ${score} out of 10.`;
   };
