@@ -193,7 +193,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
         </tbody>
       </table>
     </div>
-    <button onclick="location.reload()">Logout</button>
+    <button id="admin-logout-btn">Logout</button>
   </div>
   <div id="user-login-section">
     <b>Enter your name to login</b>
@@ -211,53 +211,48 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
   </div>
   <div id="result-section" class="hidden">
     <div class="result" id="result-message"></div>
-    <button onclick="location.reload()">Restart</button>
+    <button id="user-logout-btn">Restart</button>
   </div>
 </div>
 <script>
+  // --- UTILITIES ---
   function getLoginList() {
-    try {
-      let arr = JSON.parse(localStorage.getItem('uhvquiz_userlist')||'[]');
-      return Array.isArray(arr) ? arr : [];
-    } catch(e) { return []; }
+    try { let arr = JSON.parse(localStorage.getItem('uhvquiz_userlist')||'[]'); return Array.isArray(arr)?arr:[]; } catch(e){return [];}
   }
   function addUserLogin(name) {
-    let arr = getLoginList();
-    name = name.trim();
-    if (!arr.includes(name)) { arr.push(name); }
-    localStorage.setItem('uhvquiz_userlist', JSON.stringify(arr));
+    let arr=getLoginList(); name=name.trim(); if(!arr.includes(name)){arr.push(name);} localStorage.setItem('uhvquiz_userlist',JSON.stringify(arr));
+  }
+  function removeUserLogin(name) {
+    let arr=getLoginList(); let newArr=arr.filter(n=>n!==name.trim());
+    localStorage.setItem('uhvquiz_userlist',JSON.stringify(newArr));
   }
   function renderUserList() {
-    let arr = getLoginList();
-    document.getElementById('admin-usercount').textContent = "Total: " + arr.length;
-    let tbody = document.querySelector('#admin-userlist-table tbody');
-    tbody.innerHTML = '';
-    arr.forEach((name, idx)=>{
-      let tr = document.createElement('tr');
-      tr.innerHTML = `<td>${idx+1}</td><td>${name}</td>`;
-      tbody.appendChild(tr);
-    });
+    let arr=getLoginList(); 
+    document.getElementById('admin-usercount').textContent="Total: "+arr.length;
+    let tbody=document.querySelector('#admin-userlist-table tbody'); tbody.innerHTML='';
+    arr.forEach((name,idx)=>{let tr=document.createElement('tr');tr.innerHTML=`<td>${idx+1}</td><td>${name}</td>`;tbody.appendChild(tr);});
   }
+  // --- PANEL REFS ---
+  const questionsInput=document.getElementById('questions-input');
+  const saveQuestionsBtn=document.getElementById('save-questions-btn');
+  const adminMessage=document.getElementById('admin-message');
+  const adminSection=document.getElementById('admin-section');
+  const adminLogoutBtn=document.getElementById('admin-logout-btn');
+  const userLoginSection=document.getElementById('user-login-section');
+  const userNameInput=document.getElementById('user-name');
+  const loginBtn=document.getElementById('login-btn');
+  const launchSection=document.getElementById('launch-section');
+  const quizSection=document.getElementById('quiz-section');
+  const quizWelcome=document.getElementById('quiz-welcome');
+  const quizForm=document.getElementById('quiz-form');
+  const startQuizBtn=document.getElementById('start-quiz-btn');
+  const submitQuizBtn=document.getElementById('submit-quiz-btn');
+  const resultSection=document.getElementById('result-section');
+  const userLogoutBtn=document.getElementById('user-logout-btn');
+  const resultMessage=document.getElementById('result-message');
+  let questionPool=[]; let currUser="";
 
-  const questionsInput = document.getElementById('questions-input');
-  const saveQuestionsBtn = document.getElementById('save-questions-btn');
-  const adminMessage = document.getElementById('admin-message');
-  const adminSection = document.getElementById('admin-section');
-  const userLoginSection = document.getElementById('user-login-section');
-  const userNameInput = document.getElementById('user-name');
-  const loginBtn = document.getElementById('login-btn');
-  const launchSection = document.getElementById('launch-section');
-  const quizSection = document.getElementById('quiz-section');
-  const quizWelcome = document.getElementById('quiz-welcome');
-  const quizForm = document.getElementById('quiz-form');
-  const startQuizBtn = document.getElementById('start-quiz-btn');
-  const submitQuizBtn = document.getElementById('submit-quiz-btn');
-  const resultSection = document.getElementById('result-section');
-  const resultMessage = document.getElementById('result-message');
-  let questionPool = [];
-  let currUser = "";
-
-  // Hide all sections
+  // --- EXCLUSIVE PANEL CONTROL ---
   function hideAllPanels(){
     adminSection.classList.add('hidden');
     userLoginSection.classList.add('hidden');
@@ -266,7 +261,10 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     resultSection.classList.add('hidden');
   }
 
-  // Save Questions (Admin)
+  // --- ADMIN LOGOUT ---
+  adminLogoutBtn.onclick = function() { location.reload(); };
+
+  // --- ADMIN: SAVE QUESTIONS ---
   saveQuestionsBtn.onclick = function() {
     const lines = questionsInput.value.trim().split('\n').filter(l=>l.length>0);
     let newPool = [];
@@ -290,20 +288,18 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     }
   }
 
-  // Login Logic (Admin/User)
+  // --- LOGIN LOGIC ---
   loginBtn.onclick = function() {
     const name = userNameInput.value.trim();
-    if (!name) {
-      userNameInput.style.borderColor='red';
-      return;
-    }
+    if (!name) { userNameInput.style.borderColor='red'; return; }
     hideAllPanels();
+    currUser = name;
+    sessionStorage.setItem('uhvquiz_currentname', name);
     if (name === "ADMIN2007") {
-      adminSection.classList.remove('hidden');
-      renderUserList();
+      adminSection.classList.remove('hidden'); renderUserList();
     } else {
       addUserLogin(name);
-      currUser = name;
+      window.onbeforeunload = function() { removeUserLogin(currUser); }; // Remove name on refresh/close
       if (questionPool.length < 10) {
         adminMessage.textContent = 'Admin must save at least 10 questions before starting!';
         userLoginSection.classList.remove('hidden');
@@ -313,7 +309,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     }
   };
 
-  // Show launch
+  // --- LAUNCH FOR NON-ADMIN ---
   function showLaunch() {
     hideAllPanels();
     launchSection.classList.remove('hidden');
@@ -335,8 +331,9 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     quizSection.classList.remove('hidden');
     quizWelcome.textContent = 'Welcome, ' + currUser + '! Answer the following 10 random questions:';
     startQuiz(currUser);
-  }
+  };
 
+  // --- QUIZ GENERATION ---
   function startQuiz(name) {
     const shuffled = questionPool.slice().sort(()=>Math.random()-0.5);
     const quizQuestions = shuffled.slice(0, 10);
@@ -357,7 +354,7 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     window.quizQuestions = quizQuestions;
   }
 
-  // Submit Quiz
+  // --- QUIZ SUBMISSION ---
   submitQuizBtn.onclick = function(e) {
     e.preventDefault();
     const answers = [];
@@ -373,6 +370,19 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
     resultSection.classList.remove('hidden');
     resultMessage.textContent = `Quiz complete! You scored ${score} out of 10.`;
   };
+
+  // --- LOGOUT/REFRESH FOR USERS ---
+  userLogoutBtn.onclick = function() {
+    removeUserLogin(currUser);
+    sessionStorage.removeItem('uhvquiz_currentname');
+    location.reload();
+  };
+
+  // Remove user name on browser refresh/leave for non-admin users
+  window.addEventListener('beforeunload', function(e){
+    let n = sessionStorage.getItem('uhvquiz_currentname');
+    if(n && n !== "ADMIN2007"){ removeUserLogin(n); }
+  });
 </script>
 </body>
 </html>
