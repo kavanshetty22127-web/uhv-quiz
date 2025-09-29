@@ -116,6 +116,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      opacity: 1;
       animation: fadeInLaunch .7s;
     }
     @keyframes fadeInLaunch {
@@ -144,7 +145,7 @@
       margin-top: 28px;
       pointer-events: none;
       transition: opacity .5s;
-      animation: fadeInStartBtn 1.5s 1.5s forwards;
+      animation: fadeInStartBtn 1.5s 1.3s forwards;
     }
     @keyframes fadeInStartBtn {
       from { opacity: 0; }
@@ -159,7 +160,6 @@
       background: #27194a !important;
       box-shadow: 0 0 2px #2efad3bb;
     }
-    /* Neon borders, panels */
     .container, #admin-section, #quiz-section, #user-login-section {
       box-shadow: 0 0 40px #5928d3, 0 0 12px #2efad3;
       border-radius: 20px;
@@ -324,10 +324,19 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
   // Launch page logic
   function showLaunch() {
     launchSection.classList.remove('hidden');
+    document.getElementById('quiz-time-title').style.opacity = "0";
+    startQuizBtn.style.opacity = "0"; startQuizBtn.style.pointerEvents = "none";
+    // Restart title animation
+    document.getElementById('quiz-time-title').style.animation = "none";
+    void document.getElementById('quiz-time-title').offsetWidth; // reflow
+    document.getElementById('quiz-time-title').style.animation = "";
+    setTimeout(function() { 
+      document.getElementById('quiz-time-title').style.opacity = "1";
+    },100);
     setTimeout(function() {
       startQuizBtn.style.opacity = "1";
       startQuizBtn.style.pointerEvents = "auto";
-    }, 1500);
+    }, 1300);
   }
   startQuizBtn.onclick = function() {
     launchSection.classList.add('hidden');
