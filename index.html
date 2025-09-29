@@ -6,45 +6,192 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=VT323&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Orbitron', 'VT323', monospace; background: radial-gradient(circle at 50% 20%, #25194a 0%, #171629 100%); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .container { background: rgba(12, 14, 39, 0.92); padding: 38px 24px 24px 24px; border-radius: 20px; box-shadow: 0 0 40px #5928d3,0 0 12px #2efad3; width:98%; max-width:520px; box-sizing: border-box; margin:0 8px; border:2px solid #2efad3; position:relative; overflow:hidden;}
-    .app-title { margin-bottom:18px; font-size:2em; font-family:'Orbitron',sans-serif; font-weight:bold; text-align:center; color:#2efad3; text-shadow:0 0 8px #9a4aff; letter-spacing:2px; background:linear-gradient(90deg,#2efad3 5%,#5928d3 95%);background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;border-bottom:1.5px solid #2efad3;margin-bottom:2em;margin-top:-0.7em;padding-bottom:0.4em;box-shadow:0 1px 8px #2efad366;}
-    textarea, input, select, button { display:block; margin:18px 0; width:100%; font-family:'VT323',monospace; font-size:1.15em; padding:8px; border-radius:7px; border:1.5px solid #5928d3; background:#19152e; color:#2efad3; outline:none; box-shadow:0 0 8px #2efad366; transition:border .18s;}
-    input:focus, textarea:focus { border:2px solid #2efad3; background:#231b38;}
-    button { background:linear-gradient(90deg,#2efad3 15%, #5928d3 90%); color:#171629; font-size:1.18em; border:none; border-radius:8px; cursor:pointer; margin-top:8px; box-shadow:0 0 12px #2efad3c0; outline:none; font-family:'Orbitron',sans-serif; letter-spacing:1px; font-weight:bold; transition:background 0.15s, color 0.2s, transform .2s;}
-    button:hover { background:linear-gradient(90deg,#5928d3 10%, #2efad3 90%); color:#fff; transform:scale(1.07);}
-    .hidden { display:none !important;}
-    .question-block {margin:26px 0; background:#20144cdd; border-radius:14px; padding:10px 16px; box-shadow:0 0 10px #9a4aff44;}
-    .result { color:#2efad3; font-size:1.3em; margin:18px 0; font-family:'Orbitron',sans-serif; text-shadow:0 0 10px #2efad3c0;}
-    .admin-message {color:#2efad3; margin:8px 0;}
-    label {display:block; margin-bottom:3px;}
-    .admin-userlist-header { font-weight:bold; margin:12px 0 4px 0; color:#9a4aff;}
-    .admin-userlist-wrap {max-height:120px; overflow-y:auto; border:1.5px solid #5928d3; border-radius:9px; background:#16112d; margin-bottom:8px; box-shadow:0 0 7px #2efad3bb inset;}
-    .admin-userlist-table {width:100%; border-collapse:collapse;}
-    .admin-userlist-table th, .admin-userlist-table td { padding:4px 8px; text-align:left;}
+    body {
+      font-family: 'Orbitron', 'VT323', monospace;
+      background: radial-gradient(circle at 50% 20%, #25194a 0%, #171629 100%);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: rgba(12, 14, 39, 0.92);
+      padding: 38px 24px 24px 24px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px #5928d3, 0 0 12px #2efad3;
+      width: 98%;
+      max-width: 520px;
+      box-sizing: border-box;
+      margin: 0 8px;
+      border: 2px solid #2efad3;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-title {
+      margin-bottom: 18px;
+      font-size: 2em;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      text-align: center;
+      color: #2efad3;
+      text-shadow: 0px 0px 8px #9a4aff;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #2efad3 5%, #5928d3 95%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      border-bottom: 1.5px solid #2efad3;
+      margin-bottom: 2em;
+      margin-top: -0.7em;
+      padding-bottom: 0.4em;
+      box-shadow: 0 1px 8px #2efad366;
+    }
+    textarea, input, select, button {
+      display: block;
+      margin: 18px 0;
+      width: 100%;
+      font-family: 'VT323', monospace;
+      font-size: 1.15em;
+      padding: 8px;
+      border-radius: 7px;
+      border: 1.5px solid #5928d3;
+      background: #19152e;
+      color: #2efad3;
+      outline: none;
+      box-shadow: 0 0 8px #2efad366;
+      transition: border .18s;
+    }
+    input:focus, textarea:focus {
+      border: 2px solid #2efad3;
+      background: #231b38;
+    }
+    button {
+      background: linear-gradient(90deg, #2efad3 15%, #5928d3 90%);
+      color: #171629;
+      font-size: 1.18em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 0 12px #2efad3c0;
+      outline: none;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      font-weight: bold;
+      transition: background 0.15s, color 0.2s, transform .2s;
+    }
+    button:hover { background: linear-gradient(90deg, #5928d3 10%, #2efad3 90%); color: #fff; transform: scale(1.07);}
+    .hidden { display: none !important; }
+    .question-block {
+      margin: 26px 0;
+      background: #20144cdd;
+      border-radius: 14px;
+      padding: 10px 16px;
+      box-shadow: 0 0 10px #9a4aff44;
+    }
+    .result {
+      color: #2efad3;
+      font-size: 1.3em;
+      margin: 18px 0;
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px #2efad3c0;
+    }
+    .admin-message { color: #2efad3; margin: 8px 0;}
+    label { display: block; margin-bottom: 3px;}
+    .admin-userlist-header { font-weight: bold; margin: 12px 0 4px 0; color: #9a4aff;}
+    .admin-userlist-wrap {
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1.5px solid #5928d3;
+      border-radius: 9px;
+      background: #16112d;
+      margin-bottom: 8px;
+      box-shadow: 0 0 7px #2efad3bb inset;
+    }
+    .admin-userlist-table { width: 100%; border-collapse: collapse;}
+    .admin-userlist-table th, .admin-userlist-table td { padding: 4px 8px; text-align: left;}
     .admin-usercount { font-size:1.09em; margin-bottom:2px; color:#2efad3;}
-    #launch-section {position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:2;background:rgba(21,10,35,0.98);display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:1;animation:fadeInLaunch .7s;}
-    @keyframes fadeInLaunch {from {opacity:0;} to {opacity:1;}}
-    #quiz-time-title { font-family:'Orbitron',sans-serif; font-size:2.7em; font-weight:bold; text-align:center; color:#2efad3; letter-spacing:2px; text-shadow:0 0 24px #9a4aff,0 0 4px #2efad3cc,2px 2px 7px #2efad3cc; opacity:0; transform:translateY(-40px) scale(0.75);animation:appearTitle 1.1s forwards;}
-    @keyframes appearTitle {0%{opacity:0;transform:translateY(-40px) scale(0.75);}60%{opacity:1;transform:translateY(0) scale(1.13);}100%{opacity:1;transform:translateY(0) scale(1);}}
-    #start-quiz-btn {opacity:0; margin-top:28px; pointer-events:none; transition:opacity .5s; animation:fadeInStartBtn 1.5s 1.3s forwards;}
-    @keyframes fadeInStartBtn {from {opacity:0;} to{opacity:1;}}
-    input[type="radio"] { accent-color:#2efad3;width:1em;height:1em;margin-right:8px;background:#27194a !important;box-shadow:0 0 2px #2efad3bb;}
+    #launch-section {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      background: rgba(21, 10, 35, 0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 1;
+      animation: fadeInLaunch .7s;
+    }
+    @keyframes fadeInLaunch {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #quiz-time-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.7em;
+      font-weight: bold;
+      text-align: center;
+      color: #2efad3;
+      letter-spacing: 2px;
+      text-shadow: 0 0 24px #9a4aff, 0 0 4px #2efad3cc, 2px 2px 7px #2efad3cc;
+      opacity: 0;
+      transform: translateY(-40px) scale(0.75);
+      animation: appearTitle 1.1s forwards;
+    }
+    @keyframes appearTitle {
+      0% { opacity: 0; transform: translateY(-40px) scale(0.75);}
+      60% { opacity: 1; transform: translateY(0) scale(1.13);}
+      100% { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    #start-quiz-btn {
+      opacity: 0;
+      margin-top: 28px;
+      pointer-events: none;
+      transition: opacity .5s;
+      animation: fadeInStartBtn 1.5s 1.3s forwards;
+    }
+    @keyframes fadeInStartBtn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    input[type="radio"] {
+      accent-color: #2efad3;
+      width: 1em;
+      height: 1em;
+      margin-right: 8px;
+      background: #27194a !important;
+      box-shadow: 0 0 2px #2efad3bb;
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="app-title">UHV quiz</div>
   <div id="admin-section" class="hidden">
-    <b>Admin: Enter MCQ questions here...</b>
-    <textarea id="questions-input" rows="6" placeholder='Format each MCQ as: Question?|Option1|Option2|Option3|Option4|correct option index
-Example: What is 2+2?|2|4|6|8|1'></textarea>
+    <b>Admin: Enter MCQ questions here (save before user quiz!)</b>
+    <textarea id="questions-input" rows="6" placeholder='Format each MCQ as:
+Question?|Option1|Option2|Option3|Option4|correct option index
+Example:
+What is 2+2?|2|4|6|8|1
+Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
+'></textarea>
     <button id="save-questions-btn">Save Questions</button>
     <div class="admin-message" id="admin-message"></div>
     <div class="admin-userlist-header">People who have logged in:</div>
     <div class="admin-usercount" id="admin-usercount"></div>
     <div class="admin-userlist-wrap">
-      <table class="admin-userlist-table" id="admin-userlist-table"><thead><tr><th>#</th><th>Name</th></tr></thead><tbody></tbody></table>
+      <table class="admin-userlist-table" id="admin-userlist-table">
+        <thead>
+          <tr><th>#</th><th>Name</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <button onclick="location.reload()">Logout</button>
   </div>
@@ -69,79 +216,162 @@ Example: What is 2+2?|2|4|6|8|1'></textarea>
 </div>
 <script>
   function getLoginList() {
-    try { let arr = JSON.parse(localStorage.getItem('uhvquiz_userlist')||'[]'); return Array.isArray(arr)?arr:[]; } catch(e){return [];}
+    try {
+      let arr = JSON.parse(localStorage.getItem('uhvquiz_userlist')||'[]');
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
   }
   function addUserLogin(name) {
-    let arr=getLoginList(); name=name.trim(); if(!arr.includes(name)){arr.push(name);} localStorage.setItem('uhvquiz_userlist',JSON.stringify(arr));
+    let arr = getLoginList();
+    name = name.trim();
+    if (!arr.includes(name)) { arr.push(name); }
+    localStorage.setItem('uhvquiz_userlist', JSON.stringify(arr));
   }
   function renderUserList() {
-    let arr=getLoginList(); document.getElementById('admin-usercount').textContent="Total: "+arr.length;
-    let tbody=document.querySelector('#admin-userlist-table tbody'); tbody.innerHTML='';
-    arr.forEach((name,idx)=>{let tr=document.createElement('tr');tr.innerHTML=`<td>${idx+1}</td><td>${name}</td>`;tbody.appendChild(tr);});
+    let arr = getLoginList();
+    document.getElementById('admin-usercount').textContent = "Total: " + arr.length;
+    let tbody = document.querySelector('#admin-userlist-table tbody');
+    tbody.innerHTML = '';
+    arr.forEach((name, idx)=>{
+      let tr = document.createElement('tr');
+      tr.innerHTML = `<td>${idx+1}</td><td>${name}</td>`;
+      tbody.appendChild(tr);
+    });
   }
-  const questionsInput=document.getElementById('questions-input');
-  const saveQuestionsBtn=document.getElementById('save-questions-btn');
-  const adminMessage=document.getElementById('admin-message');
-  const adminSection=document.getElementById('admin-section');
-  const userLoginSection=document.getElementById('user-login-section');
-  const userNameInput=document.getElementById('user-name');
-  const loginBtn=document.getElementById('login-btn');
-  const launchSection=document.getElementById('launch-section');
-  const quizSection=document.getElementById('quiz-section');
-  const quizWelcome=document.getElementById('quiz-welcome');
-  const quizForm=document.getElementById('quiz-form');
-  const startQuizBtn=document.getElementById('start-quiz-btn');
-  const submitQuizBtn=document.getElementById('submit-quiz-btn');
-  const resultSection=document.getElementById('result-section');
-  const resultMessage=document.getElementById('result-message');
-  let questionPool=[]; let currUser="";
-  function hideAll() {
-    adminSection.classList.add('hidden'); userLoginSection.classList.add('hidden');
-    launchSection.classList.add('hidden'); quizSection.classList.add('hidden'); resultSection.classList.add('hidden');
+
+  const questionsInput = document.getElementById('questions-input');
+  const saveQuestionsBtn = document.getElementById('save-questions-btn');
+  const adminMessage = document.getElementById('admin-message');
+  const adminSection = document.getElementById('admin-section');
+  const userLoginSection = document.getElementById('user-login-section');
+  const userNameInput = document.getElementById('user-name');
+  const loginBtn = document.getElementById('login-btn');
+  const launchSection = document.getElementById('launch-section');
+  const quizSection = document.getElementById('quiz-section');
+  const quizWelcome = document.getElementById('quiz-welcome');
+  const quizForm = document.getElementById('quiz-form');
+  const startQuizBtn = document.getElementById('start-quiz-btn');
+  const submitQuizBtn = document.getElementById('submit-quiz-btn');
+  const resultSection = document.getElementById('result-section');
+  const resultMessage = document.getElementById('result-message');
+  let questionPool = [];
+  let currUser = "";
+
+  // Hide all sections
+  function hideAllPanels(){
+    adminSection.classList.add('hidden');
+    userLoginSection.classList.add('hidden');
+    launchSection.classList.add('hidden');
+    quizSection.classList.add('hidden');
+    resultSection.classList.add('hidden');
   }
-  saveQuestionsBtn.onclick=function() {
-    const lines=questionsInput.value.trim().split('\n').filter(l=>l.length>0);
-    let newPool=[]; for(const line of lines){const parts=line.split('|');
-    if(parts.length!==6){continue;}const[q,o1,o2,o3,o4,answerIdx]=parts;
-    newPool.push({question:q,options:[o1,o2,o3,o4],answer:parseInt(answerIdx)});
+
+  // Save Questions (Admin)
+  saveQuestionsBtn.onclick = function() {
+    const lines = questionsInput.value.trim().split('\n').filter(l=>l.length>0);
+    let newPool = [];
+    for (const line of lines) {
+      const parts = line.split('|');
+      if (parts.length !== 6) { continue; }
+      const [q, o1, o2, o3, o4, answerIdx] = parts;
+      newPool.push({
+        question: q,
+        options: [o1, o2, o3, o4],
+        answer: parseInt(answerIdx)
+      });
     }
-    if(newPool.length>=10){questionPool=newPool;adminMessage.textContent='Questions saved! Users may begin the quiz.';saveQuestionsBtn.style.background="#3aa655";
-    setTimeout(()=>{adminMessage.textContent='';},3500);}else{adminMessage.textContent='Please enter at least 10 questions in the specified format.';}
-  };
-  loginBtn.onclick=function(){
-    const name=userNameInput.value.trim(); if(!name){userNameInput.style.borderColor='red';return;}
-    hideAll();
-    if(name==="ADMIN2007"){adminSection.classList.remove('hidden');renderUserList();}
-    else{
-      addUserLogin(name); currUser=name;
-      if(questionPool.length<10){adminMessage.textContent='Admin must save at least 10 questions before starting!'; userLoginSection.classList.remove('hidden'); return;}
-      launchSection.classList.remove('hidden');
-      document.getElementById('quiz-time-title').style.opacity="0";
-      startQuizBtn.style.opacity="0"; startQuizBtn.style.pointerEvents="none";
-      document.getElementById('quiz-time-title').style.animation="none";
-      void document.getElementById('quiz-time-title').offsetWidth;
-      document.getElementById('quiz-time-title').style.animation="";
-      setTimeout(function(){document.getElementById('quiz-time-title').style.opacity="1";},100);
-      setTimeout(function(){startQuizBtn.style.opacity="1";startQuizBtn.style.pointerEvents="auto";},1300);
+    if (newPool.length >= 10) {
+      questionPool = newPool;
+      adminMessage.textContent = 'Questions saved! Users may begin the quiz.';
+      saveQuestionsBtn.style.background = "#3aa655";
+      setTimeout(()=>{adminMessage.textContent='';}, 3500);
+    } else {
+      adminMessage.textContent = 'Please enter at least 10 questions in the specified format.';
+    }
+  }
+
+  // Login Logic (Admin/User)
+  loginBtn.onclick = function() {
+    const name = userNameInput.value.trim();
+    if (!name) {
+      userNameInput.style.borderColor='red';
+      return;
+    }
+    hideAllPanels();
+    if (name === "ADMIN2007") {
+      adminSection.classList.remove('hidden');
+      renderUserList();
+    } else {
+      addUserLogin(name);
+      currUser = name;
+      if (questionPool.length < 10) {
+        adminMessage.textContent = 'Admin must save at least 10 questions before starting!';
+        userLoginSection.classList.remove('hidden');
+        return;
+      }
+      showLaunch();
     }
   };
-  startQuizBtn.onclick=function(){
-    hideAll(); quizSection.classList.remove('hidden');
-    quizWelcome.textContent='Welcome, '+currUser+'! Answer the following 10 random questions:';
+
+  // Show launch
+  function showLaunch() {
+    hideAllPanels();
+    launchSection.classList.remove('hidden');
+    document.getElementById('quiz-time-title').style.opacity = "0";
+    startQuizBtn.style.opacity = "0"; startQuizBtn.style.pointerEvents = "none";
+    document.getElementById('quiz-time-title').style.animation = "none";
+    void document.getElementById('quiz-time-title').offsetWidth;
+    document.getElementById('quiz-time-title').style.animation = "";
+    setTimeout(function() {
+      document.getElementById('quiz-time-title').style.opacity = "1";
+    },100);
+    setTimeout(function() {
+      startQuizBtn.style.opacity = "1";
+      startQuizBtn.style.pointerEvents = "auto";
+    }, 1300);
+  }
+  startQuizBtn.onclick = function() {
+    hideAllPanels();
+    quizSection.classList.remove('hidden');
+    quizWelcome.textContent = 'Welcome, ' + currUser + '! Answer the following 10 random questions:';
     startQuiz(currUser);
-  };
-  function startQuiz(name){
-    const shuffled=questionPool.slice().sort(()=>Math.random()-0.5); const quizQuestions=shuffled.slice(0,10);
-    quizForm.innerHTML=''; quizQuestions.forEach((q,idx)=>{
-      quizForm.innerHTML+=`<div class="question-block"><b>Q${idx+1}: ${q.question}</b><br>${q.options.map((opt,i)=>`<label><input type="radio" name="q${idx}" value="${i}" required>${opt}</label>`).join('')}</div>`;
-    }); window.quizQuestions=quizQuestions;
   }
-  submitQuizBtn.onclick=function(e){
-    e.preventDefault(); const answers=[]; for(let i=0;i<10;i++){
-      const sel=quizForm.querySelector('input[name="q'+i+'"]:checked'); answers.push(sel?parseInt(sel.value):null);}
-    let score=0; window.quizQuestions.forEach((q,idx)=>{if(answers[idx]===q.answer)score++;});
-    hideAll(); resultSection.classList.remove('hidden');
-    resultMessage.textContent=`Quiz complete! You scored ${score} out of 10.`;
+
+  function startQuiz(name) {
+    const shuffled = questionPool.slice().sort(()=>Math.random()-0.5);
+    const quizQuestions = shuffled.slice(0, 10);
+    quizForm.innerHTML = '';
+    quizQuestions.forEach((q, idx)=>{
+      quizForm.innerHTML += `
+      <div class="question-block">
+        <b>Q${idx+1}: ${q.question}</b><br>
+        ${q.options.map((opt,i) => ` 
+          <label>
+            <input type="radio" name="q${idx}" value="${i}" required>
+            ${opt}
+          </label>
+        `).join('')}
+      </div>
+      `;
+    });
+    window.quizQuestions = quizQuestions;
+  }
+
+  // Submit Quiz
+  submitQuizBtn.onclick = function(e) {
+    e.preventDefault();
+    const answers = [];
+    for (let i=0; i<10; i++) {
+      const sel = quizForm.querySelector('input[name="q'+i+'"]:checked');
+      answers.push(sel ? parseInt(sel.value) : null);
+    }
+    let score = 0;
+    window.quizQuestions.forEach((q, idx)=>{
+      if (answers[idx] === q.answer) score++;
+    });
+    hideAllPanels();
+    resultSection.classList.remove('hidden');
+    resultMessage.textContent = `Quiz complete! You scored ${score} out of 10.`;
   };
 </script>
 </body>
