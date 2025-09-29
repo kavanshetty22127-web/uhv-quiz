@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>UHV quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,14 +12,17 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
     .container {
       background: white;
       padding: 32px;
       border-radius: 12px;
       box-shadow: 0 4px 18px rgba(0,0,0,.12);
-      width: 92%;
-      max-width: 420px;
+      width: 98%;
+      max-width: 500px;
+      box-sizing: border-box;
+      margin: 0 8px;
     }
     textarea, input, select, button {
       display: block;
@@ -36,53 +40,111 @@
       border: none;
       cursor: pointer;
       margin-top: 8px;
+      transition: background 0.2s;
     }
     button:hover { background: #0056b3; }
     .hidden { display: none; }
     .question-block { margin: 26px 0; }
-    .result { color: #3aa655; font-size: 1.4em; margin: 18px 0; }
+    .result { color: #3aa655; font-size: 1.2em; margin: 18px 0; }
     .admin-message { color: #007bff; margin: 8px 0;}
     .app-title { margin-bottom: 18px; font-size: 1.1em; font-weight: bold; text-align: center;}
+    label { display: block; margin-bottom: 3px;}
+    .admin-userlist-header { font-weight: bold; margin: 12px 0 4px 0; }
+    .admin-userlist-wrap {
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 4px 8px;
+      background: #f8f8fa;
+      margin-bottom: 8px;
+    }
+    .admin-userlist-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .admin-userlist-table th, .admin-userlist-table td {
+      padding: 4px 8px;
+      text-align: left;
+    }
+    .admin-usercount {
+      font-size:1.05em;
+      margin-bottom:2px;
+      color:#007bff;
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="app-title">UHV quiz</div>
-
   <!-- Admin Panel -->
   <div id="admin-section" class="hidden">
-    <b>Admin: Enter questions here (save before user quiz!)</b>
-    <textarea id="questions-input" rows="6" placeholder='Example format:
+    <b>Admin: Enter MCQ questions here (save before user quiz!)</b>
+    <textarea id="questions-input" rows="6" placeholder='Format each MCQ as:
+Question?|Option1|Option2|Option3|Option4|correct option index
+Example:
 What is 2+2?|2|4|6|8|1
 Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
-...'></textarea>
+'></textarea>
     <button id="save-questions-btn">Save Questions</button>
     <div class="admin-message" id="admin-message"></div>
+    <div class="admin-userlist-header">People who have logged in:</div>
+    <div class="admin-usercount" id="admin-usercount"></div>
+    <div class="admin-userlist-wrap">
+      <table class="admin-userlist-table" id="admin-userlist-table">
+        <thead>
+          <tr><th>#</th><th>Name</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
     <button onclick="location.reload()">Logout</button>
   </div>
-
   <!-- User Login -->
   <div id="user-login-section">
     <b>Enter your name to login</b>
     <input type="text" id="user-name" placeholder="Your Name">
     <button id="login-btn">Login</button>
   </div>
-
   <!-- Quiz Section -->
   <div id="quiz-section" class="hidden">
     <div id="quiz-welcome"></div>
     <form id="quiz-form"></form>
     <button id="submit-quiz-btn">Submit Quiz</button>
   </div>
-
   <!-- Result Section -->
   <div id="result-section" class="hidden">
     <div class="result" id="result-message"></div>
     <button onclick="location.reload()">Restart</button>
   </div>
 </div>
-
 <script>
+  // User log storage and rendering
+  function getLoginList() {
+    try {
+      let arr = JSON.parse(localStorage.getItem('uhvquiz_userlist')||'[]');
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
+  }
+  function addUserLogin(name) {
+    let arr = getLoginList();
+    name = name.trim();
+    if (!arr.includes(name)) { arr.push(name); }
+    localStorage.setItem('uhvquiz_userlist', JSON.stringify(arr));
+  }
+  function renderUserList() {
+    let arr = getLoginList();
+    document.getElementById('admin-usercount').textContent = "Total: " + arr.length;
+    let tbody = document.querySelector('#admin-userlist-table tbody');
+    tbody.innerHTML = '';
+    arr.forEach((name, idx)=>{
+      let tr = document.createElement('tr');
+      tr.innerHTML = `<td>${idx+1}</td><td>${name}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
   const questionsInput = document.getElementById('questions-input');
   const saveQuestionsBtn = document.getElementById('save-questions-btn');
   const adminMessage = document.getElementById('admin-message');
@@ -121,15 +183,19 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
       adminMessage.textContent = 'Please enter at least 10 questions in the specified format.';
     }
   }
-
   // Login Logic (Admin/User)
   loginBtn.onclick = function() {
     const name = userNameInput.value.trim();
-    if (!name) { userNameInput.style.borderColor='red'; return; }
+    if (!name) {
+      userNameInput.style.borderColor='red';
+      return;
+    }
     if (name === "ADMIN2007") {
       userLoginSection.classList.add('hidden');
       adminSection.classList.remove('hidden');
+      renderUserList();
     } else {
+      addUserLogin(name);
       if (questionPool.length < 10) {
         adminMessage.textContent = 'Admin must save at least 10 questions before starting!';
         return;
@@ -141,7 +207,6 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
       startQuiz(name);
     }
   };
-
   function startQuiz(name) {
     const shuffled = questionPool.slice().sort(()=>Math.random()-0.5);
     const quizQuestions = shuffled.slice(0, 10);
@@ -154,14 +219,13 @@ Who painted Mona Lisa?|Van Gogh|Da Vinci|Picasso|Dali|1
           <label>
             <input type="radio" name="q${idx}" value="${i}" required>
             ${opt}
-          </label><br>
+          </label>
         `).join('')}
       </div>
       `;
     });
-    window.quizQuestions = quizQuestions; // store for scoring
+    window.quizQuestions = quizQuestions;
   }
-
   // Submit Quiz
   submitQuizBtn.onclick = function(e) {
     e.preventDefault();
